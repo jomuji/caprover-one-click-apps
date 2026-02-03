@@ -58,3 +58,4 @@ caproverOneClickApp:
   isOfficial: false
   description: WordPress on Nginx + PHP-FPM using shared MySQL (DB/user created manually).
   documentation: Uses Docker image jomuji/caprover-wp-fpm:latest
+# trigger build
