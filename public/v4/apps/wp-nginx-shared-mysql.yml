@@ -1,0 +1,60 @@
+captainVersion: 4
+
+services:
+  $$cap_appname:
+    image: jomuji/caprover-wp-fpm:latest
+    restart: always
+    volumes:
+      - $$cap_appname-wp-data:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: $$cap_db_host
+      WORDPRESS_DB_NAME: $$cap_db_name
+      WORDPRESS_DB_USER: $$cap_db_user
+      WORDPRESS_DB_PASSWORD: $$cap_db_pass
+      WORDPRESS_TABLE_PREFIX: $$cap_table_prefix
+      WORDPRESS_CONFIG_EXTRA: |
+        define('DISABLE_WP_CRON', true);
+        define('FORCE_SSL_ADMIN', true);
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+          $_SERVER['HTTPS'] = 'on';
+        }
+
+caproverOneClickApp:
+  variables:
+    - id: $$cap_db_host
+      label: Database Host
+      defaultValue: srv-captain--mysql-db:3306
+      validRegex: /^([^\s])+$/ 
+    - id: $$cap_db_name
+      label: DB Name
+      defaultValue: wordpress
+      validRegex: /^([a-zA-Z0-9_])+$/ 
+    - id: $$cap_table_prefix
+      label: Table Prefix
+      defaultValue: wp_
+      validRegex: /^([a-zA-Z0-9_])+$/ 
+    - id: $$cap_db_user
+      label: Database User
+      defaultValue: wordpressuser
+      validRegex: /^([a-zA-Z0-9_])+$/ 
+    - id: $$cap_db_pass
+      label: Database Password
+      defaultValue: $$cap_gen_random_hex(16)
+      validRegex: /^(\\w|[^\\s\"'\\\\])+$/ 
+
+  instructions:
+    start: |-
+      WordPress on Nginx + PHP-FPM (image: jomuji/caprover-wp-fpm:latest)
+
+      Before installing:
+      1) Create DB + DB user in phpMyAdmin (shared MySQL)
+      2) Paste DB creds here
+    end: |-
+      Deployed: $$cap_appname
+
+      Wait ~1-2 minutes if you see 502 right after deploy.
+
+  displayName: WordPress (Nginx+FPM, Shared MySQL)
+  isOfficial: false
+  description: WordPress on Nginx + PHP-FPM using shared MySQL (DB/user created manually).
+  documentation: Uses Docker image jomuji/caprover-wp-fpm:latest
