@@ -2,7 +2,7 @@ captainVersion: 4
 
 services:
   $$cap_appname:
-    image: jomuji/caprover-wp-fpm:latest
+    image: jomuji/caprover-wp-fpm:0.0.3
     restart: always
     volumes:
       - $$cap_appname-wp-data:/var/www/html
